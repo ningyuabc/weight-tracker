@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>浣撻噸杩借釜</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #252542;
+            --accent: #00d9ff;
+            --accent-glow: rgba(0, 217, 255, 0.3);
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --danger: #ff4466;
+            --text-primary: #ffffff;
+            --text-secondary: #8892b0;
+            --text-muted: #4a5568;
+            --gradient-start: #00d9ff;
+            --gradient-end: #00ff88;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --radius: 16px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 217, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 217, 255, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 24px 0 32px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 16px 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card .label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stat-card .value {
+            font-family: 'Space Mono', monospace;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-card .unit {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-left: 2px;
+        }
+
+        .stat-card.highlight .value {
+            color: var(--accent);
+        }
+
+        /* Input Section */
+        .input-section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .input-section h2 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            font-family: 'Space Mono', monospace;
+            font-size: 20px;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .input-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px 24px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--bg-primary);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-header h2 {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-tab {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chart-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+
+        #weightChart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .no-data {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+        }
+
+        .no-data svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* History Section */
+        .history-section {
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .history-header h2 {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .history-header .count {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .history-item:hover {
+            transform: translateX(4px);
+        }
+
+        .history-item .date {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .history-item .weight {
+            font-family: 'Space Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .history-item .trend {
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .trend.up { color: var(--danger); }
+        .trend.down { color: var(--success); }
+        .trend.same { color: var(--text-muted); }
+
+        .history-item .delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 12px;
+            opacity: 0;
+            transition: opacity 0.2s, color 0.2s;
+        }
+
+        .history-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar */
+        .history-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 3px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: 3px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 12px 24px;
+            font-size: 14px;
+            color: var(--text-primary);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 12px 8px;
+            }
+
+            .stat-card .value {
+                font-size: 18px;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
+
+            .btn-add {
+                width: 100%;
+            }
+        }
+
+        /* PWA Install Banner */
+        .install-banner {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 440px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            z-index: 100;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .install-banner.show {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .install-banner p {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .install-banner .btn-install {
+            background: var(--accent);
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--bg-primary);
+            cursor: pointer;
+        }
+
+        .install-banner .btn-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1>浣撻噸杩借釜</h1>
+            <p>璁板綍姣忎竴澶╃殑鍙樺寲</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card highlight">
+                <div class="label">褰撳墠浣撻噸</div>
+                <div class="value" id="currentWeight">--</div>
+                <div class="unit">kg</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">鐩爣</div>
+                <div class="value" id="targetWeight">--</div>
+                <div class="unit">kg</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">璺濈鐩爣</div>
+                <div class="value" id="diffWeight">--</div>
+                <div class="unit">kg</div>
+            </div>
+        </div>
+
+        <section class="input-section">
+            <h2>璁板綍浣撻噸</h2>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>浣撻噸 (kg)</label>
+                    <input type="number" id="weightInput" step="0.1" min="20" max="300" placeholder="65.0">
+                </div>
+                <button class="btn-add" onclick="addWeight()">璁板綍</button>
+            </div>
+        </section>
+
+        <section class="chart-section">
+            <div class="chart-header">
+                <h2>瓒嬪娍鏇茬嚎</h2>
+                <div class="chart-tabs">
+                    <button class="chart-tab active" data-range="7" onclick="setChartRange(7)">7澶?/button>
+                    <button class="chart-tab" data-range="30" onclick="setChartRange(30)">30澶?/button>
+                    <button class="chart-tab" data-range="90" onclick="setChartRange(90)">鍏ㄩ儴</button>
+                </div>
+            </div>
+            <div class="chart-container" id="chartContainer">
+                <canvas id="weightChart"></canvas>
+            </div>
+        </section>
+
+        <section class="history-section">
+            <div class="history-header">
+                <h2>鍘嗗彶璁板綍</h2>
+                <span class="count" id="historyCount">0 鏉¤褰?/span>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p>杩樻病鏈夎褰?br>寮€濮嬭褰曚綘鐨勭涓€鏉′綋閲嶅惂</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="install-banner" id="installBanner">
+        <p>娣诲姞鍒颁富灞忓箷锛岃幏寰楁洿濂戒綋楠?/p>
+        <button class="btn-install" id="btnInstall">瀹夎</button>
+        <button class="btn-close" onclick="closeInstallBanner()">鉁?/button>
+    </div>
+
+    <script>
+        // Data storage
+        const STORAGE_KEY = 'weight_tracker_data';
+        const TARGET_KEY = 'weight_tracker_target';
+        let weightData = [];
+        let targetWeight = 65;
+        let chartRange = 7;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            updateUI();
+            drawChart();
+            setupServiceWorker();
+            setupInstallPrompt();
+        });
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                weightData = JSON.parse(saved);
+            }
+            const target = localStorage.getItem(TARGET_KEY);
+            if (target) {
+                targetWeight = parseFloat(target);
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(weightData));
+            localStorage.setItem(TARGET_KEY, targetWeight.toString());
+        }
+
+        // Add weight entry
+        function addWeight() {
+            const input = document.getElementById('weightInput');
+            const weight = parseFloat(input.value);
+            
+            if (!weight || weight < 20 || weight > 300) {
+                showToast('璇疯緭鍏ユ湁鏁堜綋閲?(20-300 kg)');
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const existingIndex = weightData.findIndex(d => d.date === today);
+            
+            if (existingIndex >= 0) {
+                weightData[existingIndex].weight = weight;
+            } else {
+                weightData.push({
+                    date: today,
+                    weight: weight
+                });
+            }
+
+            weightData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            saveData();
+            updateUI();
+            drawChart();
+            
+            input.value = '';
+            showToast('璁板綍鎴愬姛锛?);
+        }
+
+        // Delete weight entry
+        function deleteWeight(date) {
+            weightData = weightData.filter(d => d.date !== date);
+            saveData();
+            updateUI();
+            drawChart();
+            showToast('宸插垹闄?);
+        }
+
+        // Update UI
+        function updateUI() {
+            // Current weight
+            const currentWeightEl = document.getElementById('currentWeight');
+            const targetWeightEl = document.getElementById('targetWeight');
+            const diffWeightEl = document.getElementById('diffWeight');
+            
+            if (weightData.length > 0) {
+                const latest = weightData[weightData.length - 1].weight;
+                currentWeightEl.textContent = latest.toFixed(1);
+                
+                const diff = latest - targetWeight;
+                diffWeightEl.textContent = (diff > 0 ? '+' : '') + diff.toFixed(1);
+            } else {
+                currentWeightEl.textContent = '--';
+                diffWeightEl.textContent = '--';
+            }
+            
+            targetWeightEl.textContent = targetWeight.toFixed(1);
+
+            // History list
+            const historyList = document.getElementById('historyList');
+            const historyCount = document.getElementById('historyCount');
+            
+            historyCount.textContent = `${weightData.length} 鏉¤褰昤;
+            
+            if (weightData.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <p>杩樻病鏈夎褰?br>寮€濮嬭褰曚綘鐨勭涓€鏉′綋閲嶅惂</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const sortedData = [...weightData].reverse();
+            historyList.innerHTML = sortedData.map((item, index) => {
+                const date = new Date(item.date);
+                const dateStr = date.toLocaleDateString('zh-CN', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    weekday: 'short'
+                });
+                
+                let trend = '';
+                let trendClass = 'same';
+                if (index < sortedData.length - 1) {
+                    const prevWeight = sortedData[index + 1].weight;
+                    const diff = item.weight - prevWeight;
+                    if (diff > 0) {
+                        trend = `+${diff.toFixed(1)}`;
+                        trendClass = 'up';
+                    } else if (diff < 0) {
+                        trend = diff.toFixed(1);
+                        trendClass = 'down';
+                    }
+                }
+
+                return `
+                    <div class="history-item">
+                        <span class="date">${dateStr}</span>
+                        <div>
+                            <span class="weight">${item.weight.toFixed(1)} kg</span>
+                            ${trend ? `<span class="trend ${trendClass}">${trend}</span>` : ''}
+                        </div>
+                        <button class="delete-btn" onclick="deleteWeight('${item.date}')" title="鍒犻櫎">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Set chart range
+        function setChartRange(range) {
+            chartRange = range;
+            document.querySelectorAll('.chart-tab').forEach(tab => {
+                tab.classList.toggle('active', parseInt(tab.dataset.range) === range);
+            });
+            drawChart();
+        }
+
+        // Draw chart
+        function drawChart() {
+            const canvas = document.getElementById('weightChart');
+            const ctx = canvas.getContext('2d');
+            const container = document.getElementById('chartContainer');
+            
+            // Set canvas size
+            const dpr = window.devicePixelRatio || 1;
+            const rect = container.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            ctx.scale(dpr, dpr);
+
+            const width = rect.width;
+            const height = rect.height;
+
+            // Clear
+            ctx.clearRect(0, 0, width, height);
+
+            if (weightData.length === 0) {
+                ctx.fillStyle = '#4a5568';
+                ctx.font = '14px DM Sans';
+                ctx.textAlign = 'center';
+                ctx.fillText('鏆傛棤鏁版嵁', width / 2, height / 2);
+                return;
+            }
+
+            // Get data for range
+            let data = weightData;
+            if (chartRange < 90) {
+                const cutoff = new Date();
+                cutoff.setDate(cutoff.getDate() - chartRange);
+                data = weightData.filter(d => new Date(d.date) >= cutoff);
+            }
+
+            if (data.length === 0) {
+                ctx.fillStyle = '#4a5568';
+                ctx.font = '14px DM Sans';
+                ctx.textAlign = 'center';
+                ctx.fillText('鏆傛棤鏁版嵁', width / 2, height / 2);
+                return;
+            }
+
+            // Padding
+            const padding = { top: 20, right: 20, bottom: 30, left: 50 };
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+
+            // Get min/max
+            const weights = data.map(d => d.weight);
+            let minWeight = Math.min(...weights) - 1;
+            let maxWeight = Math.max(...weights) + 1;
+            
+            // Include target weight in range
+            minWeight = Math.min(minWeight, targetWeight - 0.5);
+            maxWeight = Math.max(maxWeight, targetWeight + 0.5);
+
+            // Draw grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            
+            const gridLines = 5;
+            for (let i = 0; i <= gridLines; i++) {
+                const y = padding.top + (chartHeight / gridLines) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(width - padding.right, y);
+                ctx.stroke();
+            }
+
+            // Draw Y axis labels
+            ctx.fillStyle = '#4a5568';
+            ctx.font = '11px Space Mono';
+            ctx.textAlign = 'right';
+            
+            for (let i = 0; i <= gridLines; i++) {
+                const y = padding.top + (chartHeight / gridLines) * i;
+                const value = maxWeight - ((maxWeight - minWeight) / gridLines) * i;
+                ctx.fillText(value.toFixed(1), padding.left - 8, y + 4);
+            }
+
+            // Draw target line
+            const targetY = padding.top + chartHeight * (1 - (targetWeight - minWeight) / (maxWeight - minWeight));
+            ctx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(padding.left, targetY);
+            ctx.lineTo(width - padding.right, targetY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Calculate points
+            const points = data.map((d, i) => {
+                const x = padding.left + (chartWidth / (data.length - 1 || 1)) * i;
+                const y = padding.top + chartHeight * (1 - (d.weight - minWeight) / (maxWeight - minWeight));
+                return { x, y, date: d.date, weight: d.weight };
+            });
+
+            // Draw gradient fill
+            const gradient = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
+            gradient.addColorStop(0, 'rgba(0, 217, 255, 0.2)');
+            gradient.addColorStop(1, 'rgba(0, 217, 255, 0)');
+
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, height - padding.bottom);
+            points.forEach(p => ctx.lineTo(p.x, p.y));
+            ctx.lineTo(points[points.length - 1].x, height - padding.bottom);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Draw line
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            
+            // Smooth curve
+            for (let i = 1; i < points.length; i++) {
+                const prev = points[i - 1];
+                const curr = points[i];
+                const cpx = (prev.x + curr.x) / 2;
+                ctx.quadraticCurveTo(prev.x, prev.y, cpx, (prev.y + curr.y) / 2);
+            }
+            ctx.quadraticCurveTo(
+                points[points.length - 1].x,
+                points[points.length - 1].y,
+                points[points.length - 1].x,
+                points[points.length - 1].y
+            );
+
+            ctx.strokeStyle = '#00d9ff';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Draw points
+            points.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#00d9ff';
+                ctx.fill();
+                ctx.strokeStyle = '#0f0f1a';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+
+            // Draw X axis labels
+            ctx.fillStyle = '#4a5568';
+            ctx.font = '10px DM Sans';
+            ctx.textAlign = 'center';
+            
+            const labelCount = Math.min(data.length, 5);
+            const labelStep = Math.floor(data.length / labelCount) || 1;
+            
+            for (let i = 0; i < data.length; i += labelStep) {
+                const date = new Date(data[i].date);
+                const label = `${date.getMonth() + 1}/${date.getDate()}`;
+                ctx.fillText(label, points[i].x, height - 8);
+            }
+        }
+
+        // Show toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // Setup service worker
+        function setupServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW failed:', err));
+            }
+        }
+
+        // Setup install prompt
+        let deferredPrompt;
+        function setupInstallPrompt() {
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('installBanner').classList.add('show');
+            });
+
+            document.getElementById('btnInstall').addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                    document.getElementById('installBanner').classList.remove('show');
+                }
+            });
+        }
+
+        function closeInstallBanner() {
+            document.getElementById('installBanner').classList.remove('show');
+        }
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            drawChart();
+        });
+
+        // Set target weight (double click on target card)
+        document.querySelector('.stat-card:nth-child(2)').addEventListener('dblclick', () => {
+            const newTarget = prompt('璁剧疆鐩爣浣撻噸 (kg):', targetWeight);
+            if (newTarget && !isNaN(newTarget)) {
+                targetWeight = parseFloat(newTarget);
+                saveData();
+                updateUI();
+                drawChart();
+                showToast(`鐩爣宸茶涓?${targetWeight} kg`);
+            }
+        });
+    </script>
+</body>
+</html>
