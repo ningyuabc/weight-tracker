@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#1a1a2e">
-    <title>浣撻噸杩借釜</title>
+    <title>体重追踪</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -531,46 +531,46 @@
 <body>
     <div class="app-container">
         <header class="header">
-            <h1>浣撻噸杩借釜</h1>
-            <p>璁板綍姣忎竴澶╃殑鍙樺寲</p>
+            <h1>体重追踪</h1>
+            <p>记录每一天的变化</p>
         </header>
 
         <div class="stats-grid">
             <div class="stat-card highlight">
-                <div class="label">褰撳墠浣撻噸</div>
+                <div class="label">当前体重</div>
                 <div class="value" id="currentWeight">--</div>
                 <div class="unit">kg</div>
             </div>
             <div class="stat-card">
-                <div class="label">鐩爣</div>
+                <div class="label">目标</div>
                 <div class="value" id="targetWeight">--</div>
                 <div class="unit">kg</div>
             </div>
             <div class="stat-card">
-                <div class="label">璺濈鐩爣</div>
+                <div class="label">距离目标</div>
                 <div class="value" id="diffWeight">--</div>
                 <div class="unit">kg</div>
             </div>
         </div>
 
         <section class="input-section">
-            <h2>璁板綍浣撻噸</h2>
+            <h2>记录体重</h2>
             <div class="input-row">
                 <div class="input-group">
-                    <label>浣撻噸 (kg)</label>
+                    <label>体重 (kg)</label>
                     <input type="number" id="weightInput" step="0.1" min="20" max="300" placeholder="65.0">
                 </div>
-                <button class="btn-add" onclick="addWeight()">璁板綍</button>
+                <button class="btn-add" onclick="addWeight()">记录</button>
             </div>
         </section>
 
         <section class="chart-section">
             <div class="chart-header">
-                <h2>瓒嬪娍鏇茬嚎</h2>
+                <h2>趋势曲线</h2>
                 <div class="chart-tabs">
-                    <button class="chart-tab active" data-range="7" onclick="setChartRange(7)">7澶?/button>
-                    <button class="chart-tab" data-range="30" onclick="setChartRange(30)">30澶?/button>
-                    <button class="chart-tab" data-range="90" onclick="setChartRange(90)">鍏ㄩ儴</button>
+                    <button class="chart-tab active" data-range="7" onclick="setChartRange(7)">7天</button>
+                    <button class="chart-tab" data-range="30" onclick="setChartRange(30)">30天</button>
+                    <button class="chart-tab" data-range="90" onclick="setChartRange(90)">全部</button>
                 </div>
             </div>
             <div class="chart-container" id="chartContainer">
@@ -580,15 +580,15 @@
 
         <section class="history-section">
             <div class="history-header">
-                <h2>鍘嗗彶璁板綍</h2>
-                <span class="count" id="historyCount">0 鏉¤褰?/span>
+                <h2>历史记录</h2>
+                <span class="count" id="historyCount">0 条记录</span>
             </div>
             <div class="history-list" id="historyList">
                 <div class="empty-state">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <p>杩樻病鏈夎褰?br>寮€濮嬭褰曚綘鐨勭涓€鏉′綋閲嶅惂</p>
+                    <p>还没有记录<br>开始记录你的第一条体重吧</p>
                 </div>
             </div>
         </section>
@@ -597,9 +597,9 @@
     <div class="toast" id="toast"></div>
 
     <div class="install-banner" id="installBanner">
-        <p>娣诲姞鍒颁富灞忓箷锛岃幏寰楁洿濂戒綋楠?/p>
-        <button class="btn-install" id="btnInstall">瀹夎</button>
-        <button class="btn-close" onclick="closeInstallBanner()">鉁?/button>
+        <p>添加到主屏幕，获得更好体验</p>
+        <button class="btn-install" id="btnInstall">安装</button>
+        <button class="btn-close" onclick="closeInstallBanner()">✕</button>
     </div>
 
     <script>
@@ -643,7 +643,7 @@
             const weight = parseFloat(input.value);
             
             if (!weight || weight < 20 || weight > 300) {
-                showToast('璇疯緭鍏ユ湁鏁堜綋閲?(20-300 kg)');
+                showToast('请输入有效体重 (20-300 kg)');
                 return;
             }
 
@@ -666,7 +666,7 @@
             drawChart();
             
             input.value = '';
-            showToast('璁板綍鎴愬姛锛?);
+            showToast('记录成功！');
         }
 
         // Delete weight entry
@@ -675,7 +675,7 @@
             saveData();
             updateUI();
             drawChart();
-            showToast('宸插垹闄?);
+            showToast('已删除');
         }
 
         // Update UI
@@ -702,7 +702,7 @@
             const historyList = document.getElementById('historyList');
             const historyCount = document.getElementById('historyCount');
             
-            historyCount.textContent = `${weightData.length} 鏉¤褰昤;
+            historyCount.textContent = `${weightData.length} 条记录`;
             
             if (weightData.length === 0) {
                 historyList.innerHTML = `
@@ -711,7 +711,7 @@
                             <circle cx="12" cy="12" r="10"/>
                             <path d="M12 6v6l4 2"/>
                         </svg>
-                        <p>杩樻病鏈夎褰?br>寮€濮嬭褰曚綘鐨勭涓€鏉′綋閲嶅惂</p>
+                        <p>还没有记录<br>开始记录你的第一条体重吧</p>
                     </div>
                 `;
                 return;
@@ -747,7 +747,7 @@
                             <span class="weight">${item.weight.toFixed(1)} kg</span>
                             ${trend ? `<span class="trend ${trendClass}">${trend}</span>` : ''}
                         </div>
-                        <button class="delete-btn" onclick="deleteWeight('${item.date}')" title="鍒犻櫎">
+                        <button class="delete-btn" onclick="deleteWeight('${item.date}')" title="删除">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
                             </svg>
@@ -791,7 +791,7 @@
                 ctx.fillStyle = '#4a5568';
                 ctx.font = '14px DM Sans';
                 ctx.textAlign = 'center';
-                ctx.fillText('鏆傛棤鏁版嵁', width / 2, height / 2);
+                ctx.fillText('暂无数据', width / 2, height / 2);
                 return;
             }
 
@@ -807,7 +807,7 @@
                 ctx.fillStyle = '#4a5568';
                 ctx.font = '14px DM Sans';
                 ctx.textAlign = 'center';
-                ctx.fillText('鏆傛棤鏁版嵁', width / 2, height / 2);
+                ctx.fillText('暂无数据', width / 2, height / 2);
                 return;
             }
 
@@ -974,13 +974,13 @@
 
         // Set target weight (double click on target card)
         document.querySelector('.stat-card:nth-child(2)').addEventListener('dblclick', () => {
-            const newTarget = prompt('璁剧疆鐩爣浣撻噸 (kg):', targetWeight);
+            const newTarget = prompt('设置目标体重 (kg):', targetWeight);
             if (newTarget && !isNaN(newTarget)) {
                 targetWeight = parseFloat(newTarget);
                 saveData();
                 updateUI();
                 drawChart();
-                showToast(`鐩爣宸茶涓?${targetWeight} kg`);
+                showToast(`目标已设为 ${targetWeight} kg`);
             }
         });
     </script>
